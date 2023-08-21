@@ -1,5 +1,5 @@
 {
     "ansible.lightspeed.enabled": true,
     "ansible.lightspeed.suggestions.enabled": true,
-    "ansible.lightspeed.URL": "https://wisdom-service.apps.wisdom-staging.vc79.p1.openshiftapps.com"
+    "ansible.lightspeed.URL": "https://stage.ai.ansible.redhat.com"
 }
