@@ -1,8 +1,14 @@
 name: Build and Push Image
 on:
   push:
+    paths:
+      - './Dockerfile'
+      - './init.go'
+      - './settings.json'
     branches:
       - main
+  schedule:
+    - cron:  '0 0 1 * *'
   # have the ability to trigger this workflow manually
   workflow_dispatch:
 
