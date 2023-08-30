@@ -7,7 +7,7 @@ COPY settings.json /home/selenium/.local/share/code-server/User/settings.json
 
 # Firefox releases
 # https://download-installer.cdn.mozilla.net/pub/firefox/releases/
-ARG FIREFOX_VERSION="102.9.0esr"
+ARG FIREFOX_VERSION="115.1.0esr"
 # Gecko driver releases
 # https://github.com/mozilla/geckodriver/releases
 ARG GECKODRIVER_VERSION="v0.33.0"
