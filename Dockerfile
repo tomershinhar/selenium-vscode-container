@@ -17,9 +17,9 @@ ARG CHROME_VERSION="112.0.5615.121"
 
 ARG SELENIUM_MAJOR_VERSION=4
 
-ARG SELENIUM_MINOR_VERSION=8
+ARG SELENIUM_MINOR_VERSION=13
 
-ARG SELENIUM_PATCH_VERSION=3
+ARG SELENIUM_PATCH_VERSION=0
 
 ENV SELENIUM_HOME=/home/selenium
 
@@ -144,19 +144,6 @@ RUN mkdir -p ${SELENIUM_HOME}/selenium-server && \
         -o ${SELENIUM_PATH} && \
     curl -L https://repo1.maven.org/maven2/org/seleniumhq/selenium/selenium-http-jdk-client/${SELENIUM_VERSION}/selenium-http-jdk-client-${SELENIUM_VERSION}.jar \
         -o ${SELENIUM_HTTP_JDK_CLIENT_PATH}
-
-RUN curl -L https://dl.google.com/linux/chrome/rpm/stable/x86_64/google-chrome-stable-${CHROME_VERSION}-1.x86_64.rpm \
-        -o google-chrome-stable-x86_64.rpm && \
-    dnf install -y google-chrome-stable-x86_64.rpm && \
-    rm -f google-chrome-stable-x86_64.rpm
-
-# chrome and chrome driver versions should match in order to avoid incompatibility
-RUN CHROME_VERSION=$(rpm -q --qf "%{VERSION}\n" google-chrome-stable | sed -Ee 's/^(.*)\..*/\1/') && \
-    CHROME_DRIVER_VERSION=$(curl -s https://chromedriver.storage.googleapis.com/LATEST_RELEASE_${CHROME_VERSION}) && \
-    curl -O https://chromedriver.storage.googleapis.com/${CHROME_DRIVER_VERSION}/chromedriver_linux64.zip && \
-    unzip -d /usr/bin/ chromedriver_linux64.zip && \
-    chmod +x /usr/bin/chromedriver && \
-    rm -f chromedriver_linux64.zip
 
 RUN curl -LO https://download-installer.cdn.mozilla.net/pub/firefox/releases/${FIREFOX_VERSION}/linux-x86_64/en-US/firefox-${FIREFOX_VERSION}.tar.bz2 && \
     tar -C . -xjvf firefox-${FIREFOX_VERSION}.tar.bz2 && \
