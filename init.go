@@ -91,6 +91,7 @@ func startSelenium() *exec.Cmd {
 func startCodeServer() *exec.Cmd {
 	vscode := exec.Command(
 		"code-server",
+		"./workspace",
 		"--auth",
 		"none",
 	)

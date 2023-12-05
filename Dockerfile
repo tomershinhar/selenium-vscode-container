@@ -159,6 +159,9 @@ RUN curl -fsSL https://code-server.dev/install.sh | sh
 # install ansible extension
 RUN code-server --install-extension redhat.ansible 
 
+# set up work directory for vs-code
+RUN mkdir -p workspace && touch workspace/playbook.yaml
+
 
 # enable FIPS mode for NSS
 RUN modutil -fips true -dbdir /etc/pki/nssdb -force && \
