@@ -157,7 +157,10 @@ RUN curl -LO https://github.com/mozilla/geckodriver/releases/download/${GECKODRI
 RUN curl -fsSL https://code-server.dev/install.sh | sh
 
 # install ansible extension
-RUN code-server --install-extension redhat.ansible 
+COPY ansible-2023.12.7.vsix .
+
+# RUN code-server --install-extension redhat.ansible 
+RUN code-server --install-extension ansible-2023.12.7.vsix 
 
 # set up work directory for vs-code
 RUN mkdir -p workspace && touch workspace/playbook.yaml
