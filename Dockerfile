@@ -21,8 +21,6 @@ ARG SELENIUM_MINOR_VERSION=8
 
 ARG SELENIUM_PATCH_VERSION=3
 
-ARG EXTENSION_VERSION=2.10.130
-
 ENV SELENIUM_HOME=/home/selenium
 
 ENV SELENIUM_PORT=4444 \
@@ -70,6 +68,7 @@ RUN PACKAGES="\
         harfbuzz \
         imlib2 \
         java-11-openjdk-headless \
+	 jq \
         libcloudproviders \
         libdatrie \
         libdrm \
@@ -159,10 +158,11 @@ RUN curl -LO https://github.com/mozilla/geckodriver/releases/download/${GECKODRI
 RUN curl -fsSL https://code-server.dev/install.sh | sh
 
 # download extension file
-RUN curl -L https://open-vsx.org/api/redhat/ansible/${EXTENSION_VERSION}/file/redhat.ansible-${EXTENSION_VERSION}.vsix -o ansible-${EXTENSION_VERSION}.vsix
+RUN export download_url=$(curl -s https://open-vsx.org/api/redhat/ansible | jq -r '.files.download') && \
+    curl -L ${download_url} -o ansible-latest.vsix
 
 # install vs-code extension
-RUN code-server --install-extension ansible-${EXTENSION_VERSION}.vsix
+RUN code-server --install-extension ansible-latest.vsix
 
 # set up work directory for vs-code
 RUN mkdir -p workspace && touch workspace/playbook.yaml
