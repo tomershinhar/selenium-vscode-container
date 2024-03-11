@@ -157,12 +157,15 @@ RUN curl -LO https://github.com/mozilla/geckodriver/releases/download/${GECKODRI
 # install code-server	
 RUN curl -fsSL https://code-server.dev/install.sh | sh
 
-# download extension file
-RUN export download_url=$(curl -s https://open-vsx.org/api/redhat/ansible | jq -r '.files.download') && \
-    curl -L ${download_url} -o ansible-latest.vsix
+# get extension files
+COPY ansible-2.12.0.vsix .
 
-# install vs-code extension
-RUN code-server --install-extension ansible-latest.vsix
+COPY vscode-inline-suggestion-sample-0.0.1.vsix .
+
+# install vs-code extensions
+RUN code-server --install-extension ansible-2.12.0.vsix
+
+RUN code-server --install-extension vscode-inline-suggestion-sample-0.0.1.vsix
 
 # set up work directory for vs-code
 RUN mkdir -p workspace && touch workspace/playbook.yaml
