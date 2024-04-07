@@ -2,9 +2,9 @@ name: Build and Push Image
 on:
   push:
     paths:
-      - './Dockerfile'
-      - './init.go'
-      - './settings.json'
+      - 'Dockerfile'
+      - 'init.go'
+      - 'settings.json'
     branches:
       - main
   schedule:
