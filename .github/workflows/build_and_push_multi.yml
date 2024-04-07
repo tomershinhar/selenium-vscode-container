@@ -2,9 +2,9 @@ name: Build and Push Image Mlti Extensions
 on:
   push:
     paths:
-      - './Dockerfile_multi'
-      - './init.go'
-      - './settings.json'
+      - 'Dockerfile_multi'
+      - 'init.go'
+      - 'settings.json'
     branches:
       - main
   schedule:
