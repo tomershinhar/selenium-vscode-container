@@ -178,5 +178,8 @@ RUN chown -R 1001:0 ${SELENIUM_HOME} && \
 
 USER 1001
 
+# install packages needed for go file
+RUN go vet /init.go
+
 # run init.go to start all process in order
 CMD ["sh", "-c", "go run /init.go" ]
