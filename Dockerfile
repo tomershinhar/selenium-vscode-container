@@ -157,12 +157,16 @@ RUN curl -LO https://github.com/mozilla/geckodriver/releases/download/${GECKODRI
 # install code-server	
 RUN curl -fsSL https://code-server.dev/install.sh | sh
 
-# download extension file
+# download ansible extension file
 RUN export download_url=$(curl -s https://open-vsx.org/api/redhat/ansible | jq -r '.files.download') && \
     curl -L ${download_url} -o ansible-latest.vsix
 
-# install vs-code extension
-RUN code-server --install-extension ansible-latest.vsix
+# download redhat auth extension file
+RUN export download_url=$(curl -s https://open-vsx.org/api/redhat/vscode-redhat-account | jq -r '.files.download') && \
+    curl -L ${download_url} -o rh-auth-latest.vsix
+
+# install vs-code extensions
+RUN code-server --install-extension ansible-latest.vsix && code-server --install-extension rh-auth-latest.vsix
 
 # set up work directory for vs-code
 RUN mkdir -p workspace && touch workspace/playbook.yaml
@@ -177,6 +181,9 @@ RUN chown -R 1001:0 ${SELENIUM_HOME} && \
     chmod -R g=u ${SELENIUM_HOME}
 
 USER 1001
+
+# install packages needed for go file
+RUN go vet /init.go
 
 # run init.go to start all process in order
 CMD ["sh", "-c", "go run /init.go" ]
