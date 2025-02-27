@@ -1,4 +1,4 @@
-FROM registry.fedoraproject.org/fedora:39-x86_64
+FROM registry.fedoraproject.org/fedora:41-x86_64
 LABEL maintainer="tshinhar@redhat.com"
 
 COPY init.go .
@@ -7,19 +7,19 @@ COPY settings.json /home/selenium/.local/share/code-server/User/settings.json
 
 # Firefox releases
 # https://download-installer.cdn.mozilla.net/pub/firefox/releases/
-ARG FIREFOX_VERSION="115.1.0esr"
+ARG FIREFOX_VERSION="128.5.2esr"
 # Gecko driver releases
 # https://github.com/mozilla/geckodriver/releases
-ARG GECKODRIVER_VERSION="v0.33.0"
+ARG GECKODRIVER_VERSION="v0.35.0"
 # Chrome versions
 # https://www.ubuntuupdates.org/package/google_chrome/stable/main/base/google-chrome-stable
-ARG CHROME_VERSION="112.0.5615.121"
+ARG CHROME_VERSION="131.0.6778.139-1"
 
 ARG SELENIUM_MAJOR_VERSION=4
 
-ARG SELENIUM_MINOR_VERSION=8
+ARG SELENIUM_MINOR_VERSION=27
 
-ARG SELENIUM_PATCH_VERSION=3
+ARG SELENIUM_PATCH_VERSION=0
 
 ENV SELENIUM_HOME=/home/selenium
 
