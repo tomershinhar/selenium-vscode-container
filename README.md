@@ -6,6 +6,13 @@ to build the image, clone the repo and run:
 docker build -t {name} -f Dockerfile .
 ```
 
+or
+
+
+```bash
+podman build -t {name} -f Dockerfile .
+```
+
 then to run it:
 ```bash
 docker run -it --shm-size=2g -p 4444:4444 -p 5999:5999 {name}
