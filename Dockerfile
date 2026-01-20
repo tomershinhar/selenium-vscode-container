@@ -1,5 +1,5 @@
-FROM registry.fedoraproject.org/fedora:41-x86_64
-LABEL maintainer="tshinhar@redhat.com"
+FROM registry.fedoraproject.org/fedora:43-x86_64 AS selenium-vscode
+LABEL maintainer="goneri@redhat.com"
 
 COPY init.go .
 
@@ -7,17 +7,17 @@ COPY settings.json /home/selenium/.local/share/code-server/User/settings.json
 
 # Firefox releases
 # https://download-installer.cdn.mozilla.net/pub/firefox/releases/
-ARG FIREFOX_VERSION="128.5.2esr"
+ARG FIREFOX_URL="https://download-installer.cdn.mozilla.net/pub/firefox/releases/140.7.0esr/linux-x86_64/en-US/firefox-140.7.0esr.tar.xz"
 # Gecko driver releases
 # https://github.com/mozilla/geckodriver/releases
-ARG GECKODRIVER_VERSION="v0.35.0"
+ARG GECKODRIVER_VERSION="v0.36.0"
 # Chrome versions
 # https://www.ubuntuupdates.org/package/google_chrome/stable/main/base/google-chrome-stable
-ARG CHROME_VERSION="131.0.6778.139-1"
+ARG CHROME_VERSION="144.0.7559.59-1"
 
 ARG SELENIUM_MAJOR_VERSION=4
 
-ARG SELENIUM_MINOR_VERSION=27
+ARG SELENIUM_MINOR_VERSION=39
 
 ARG SELENIUM_PATCH_VERSION=0
 
@@ -64,11 +64,11 @@ RUN PACKAGES="\
         gdk-pixbuf2 \
         graphite2 \
         gtk3 \
-	  go \
+        go \
         harfbuzz \
         imlib2 \
-        java-11-openjdk-headless \
-	 jq \
+        java-latest-openjdk-headless \
+        jq \
         libcloudproviders \
         libdatrie \
         libdrm \
@@ -146,15 +146,13 @@ RUN mkdir -p ${SELENIUM_HOME}/selenium-server && \
     curl -L https://repo1.maven.org/maven2/org/seleniumhq/selenium/selenium-http-jdk-client/${SELENIUM_VERSION}/selenium-http-jdk-client-${SELENIUM_VERSION}.jar \
         -o ${SELENIUM_HTTP_JDK_CLIENT_PATH}
 
-RUN curl -LO https://download-installer.cdn.mozilla.net/pub/firefox/releases/${FIREFOX_VERSION}/linux-x86_64/en-US/firefox-${FIREFOX_VERSION}.tar.bz2 && \
-    tar -C . -xjvf firefox-${FIREFOX_VERSION}.tar.bz2 && \
-    rm -f firefox-${FIREFOX_VERSION}.tar.bz2
+RUN curl -L https://download-installer.cdn.mozilla.net/pub/firefox/releases/140.7.0esr/linux-x86_64/en-US/firefox-140.7.0esr.tar.xz|tar --xz -x
 
 RUN curl -LO https://github.com/mozilla/geckodriver/releases/download/${GECKODRIVER_VERSION}/geckodriver-${GECKODRIVER_VERSION}-linux64.tar.gz && \
     tar -C /usr/bin/ -xvf geckodriver-${GECKODRIVER_VERSION}-linux64.tar.gz && \
     rm -f geckodriver-${GECKODRIVER_VERSION}-linux64.tar.gz
 
-# install code-server	
+# install code-server
 RUN curl -fsSL https://code-server.dev/install.sh | sh
 
 # download ansible extension file
@@ -187,3 +185,10 @@ RUN go vet /init.go
 
 # run init.go to start all process in order
 CMD ["sh", "-c", "go run /init.go" ]
+
+
+FROM selenium-vscode as selenium-vscode-multi
+
+# get extension files
+COPY vscode-inline-suggestion-sample-0.0.1.vsix .
+RUN code-server --install-extension vscode-inline-suggestion-sample-0.0.1.vsix
