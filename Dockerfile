@@ -153,7 +153,8 @@ RUN curl -LO https://github.com/mozilla/geckodriver/releases/download/${GECKODRI
     rm -f geckodriver-${GECKODRIVER_VERSION}-linux64.tar.gz
 
 # install code-server
-RUN curl -fsSL https://code-server.dev/install.sh | sh
+RUN curl -fsSL https://code-server.dev/install.sh > install.sh
+RUN sh install.sh --version 4.117.0
 
 # download ansible extension file
 RUN export download_url=$(curl -s https://open-vsx.org/api/redhat/ansible | jq -r '.files.download') && \
