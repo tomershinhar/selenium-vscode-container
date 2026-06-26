@@ -7,17 +7,17 @@ COPY settings.json /home/selenium/.local/share/code-server/User/settings.json
 
 # Firefox releases
 # https://download-installer.cdn.mozilla.net/pub/firefox/releases/
-ARG FIREFOX_URL="https://download-installer.cdn.mozilla.net/pub/firefox/releases/140.7.0esr/linux-x86_64/en-US/firefox-140.7.0esr.tar.xz"
+ARG FIREFOX_URL="https://download-installer.cdn.mozilla.net/pub/firefox/releases/140.9.1esr/linux-x86_64/en-US/firefox-140.9.1esr.tar.xz"
 # Gecko driver releases
 # https://github.com/mozilla/geckodriver/releases
-ARG GECKODRIVER_VERSION="v0.36.0"
+ARG GECKODRIVER_VERSION="v0.37.0"
 # Chrome versions
 # https://www.ubuntuupdates.org/package/google_chrome/stable/main/base/google-chrome-stable
-ARG CHROME_VERSION="144.0.7559.59-1"
+ARG CHROME_VERSION="149.0.7827.200-1"
 
 ARG SELENIUM_MAJOR_VERSION=4
 
-ARG SELENIUM_MINOR_VERSION=39
+ARG SELENIUM_MINOR_VERSION=45
 
 ARG SELENIUM_PATCH_VERSION=0
 
@@ -146,11 +146,21 @@ RUN mkdir -p ${SELENIUM_HOME}/selenium-server && \
     curl -L https://repo1.maven.org/maven2/org/seleniumhq/selenium/selenium-http-jdk-client/${SELENIUM_VERSION}/selenium-http-jdk-client-${SELENIUM_VERSION}.jar \
         -o ${SELENIUM_HTTP_JDK_CLIENT_PATH}
 
-RUN curl -L https://download-installer.cdn.mozilla.net/pub/firefox/releases/140.7.0esr/linux-x86_64/en-US/firefox-140.7.0esr.tar.xz|tar --xz -x
+RUN curl -L https://download-installer.cdn.mozilla.net/pub/firefox/releases/140.9.1esr/linux-x86_64/en-US/firefox-140.9.1esr.tar.xz|tar --xz -x
 
 RUN curl -LO https://github.com/mozilla/geckodriver/releases/download/${GECKODRIVER_VERSION}/geckodriver-${GECKODRIVER_VERSION}-linux64.tar.gz && \
     tar -C /usr/bin/ -xvf geckodriver-${GECKODRIVER_VERSION}-linux64.tar.gz && \
     rm -f geckodriver-${GECKODRIVER_VERSION}-linux64.tar.gz
+
+RUN echo -e '[google-chrome]\nname=google-chrome\nbaseurl=https://dl.google.com/linux/chrome/rpm/stable/x86_64\nenabled=1\ngpgcheck=1\ngpgkey=https://dl.google.com/linux/linux_signing_key.pub' > /etc/yum.repos.d/google-chrome.repo && \
+    dnf install -y google-chrome-stable-${CHROME_VERSION}
+
+RUN CHROME_DRIVER_VERSION=$(echo ${CHROME_VERSION} | sed 's/-[0-9]*$//') && \
+    curl -LO "https://storage.googleapis.com/chrome-for-testing-public/${CHROME_DRIVER_VERSION}/linux64/chromedriver-linux64.zip" && \
+    unzip chromedriver-linux64.zip && \
+    mv chromedriver-linux64/chromedriver /usr/bin/chromedriver && \
+    chmod +x /usr/bin/chromedriver && \
+    rm -rf chromedriver-linux64.zip chromedriver-linux64
 
 # install code-server
 RUN curl -fsSL https://code-server.dev/install.sh | sh
