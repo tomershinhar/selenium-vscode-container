@@ -11,10 +11,6 @@ ARG FIREFOX_URL="https://download-installer.cdn.mozilla.net/pub/firefox/releases
 # Gecko driver releases
 # https://github.com/mozilla/geckodriver/releases
 ARG GECKODRIVER_VERSION="v0.37.0"
-# Chrome versions
-# https://www.ubuntuupdates.org/package/google_chrome/stable/main/base/google-chrome-stable
-ARG CHROME_VERSION="149.0.7827.200-1"
-
 ARG SELENIUM_MAJOR_VERSION=4
 
 ARG SELENIUM_MINOR_VERSION=45
@@ -153,9 +149,9 @@ RUN curl -LO https://github.com/mozilla/geckodriver/releases/download/${GECKODRI
     rm -f geckodriver-${GECKODRIVER_VERSION}-linux64.tar.gz
 
 RUN echo -e '[google-chrome]\nname=google-chrome\nbaseurl=https://dl.google.com/linux/chrome/rpm/stable/x86_64\nenabled=1\ngpgcheck=1\ngpgkey=https://dl.google.com/linux/linux_signing_key.pub' > /etc/yum.repos.d/google-chrome.repo && \
-    dnf install -y google-chrome-stable-${CHROME_VERSION}
+    dnf install -y google-chrome-stable
 
-RUN CHROME_DRIVER_VERSION=$(echo ${CHROME_VERSION} | sed 's/-[0-9]*$//') && \
+RUN CHROME_DRIVER_VERSION=$(google-chrome --version | grep -oP '[\d.]+') && \
     curl -LO "https://storage.googleapis.com/chrome-for-testing-public/${CHROME_DRIVER_VERSION}/linux64/chromedriver-linux64.zip" && \
     unzip chromedriver-linux64.zip && \
     mv chromedriver-linux64/chromedriver /usr/bin/chromedriver && \
