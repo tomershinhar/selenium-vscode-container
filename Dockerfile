@@ -152,6 +152,16 @@ RUN curl -LO https://github.com/mozilla/geckodriver/releases/download/${GECKODRI
     tar -C /usr/bin/ -xvf geckodriver-${GECKODRIVER_VERSION}-linux64.tar.gz && \
     rm -f geckodriver-${GECKODRIVER_VERSION}-linux64.tar.gz
 
+RUN echo -e '[google-chrome]\nname=google-chrome\nbaseurl=https://dl.google.com/linux/chrome/rpm/stable/x86_64\nenabled=1\ngpgcheck=1\ngpgkey=https://dl.google.com/linux/linux_signing_key.pub' > /etc/yum.repos.d/google-chrome.repo && \
+    dnf install -y google-chrome-stable-${CHROME_VERSION}
+
+RUN CHROME_DRIVER_VERSION=$(echo ${CHROME_VERSION} | sed 's/-[0-9]*$//') && \
+    curl -LO "https://storage.googleapis.com/chrome-for-testing-public/${CHROME_DRIVER_VERSION}/linux64/chromedriver-linux64.zip" && \
+    unzip chromedriver-linux64.zip && \
+    mv chromedriver-linux64/chromedriver /usr/bin/chromedriver && \
+    chmod +x /usr/bin/chromedriver && \
+    rm -rf chromedriver-linux64.zip chromedriver-linux64
+
 # install code-server
 RUN curl -fsSL https://code-server.dev/install.sh | sh
 
