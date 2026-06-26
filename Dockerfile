@@ -13,7 +13,7 @@ ARG FIREFOX_URL="https://download-installer.cdn.mozilla.net/pub/firefox/releases
 ARG GECKODRIVER_VERSION="v0.37.0"
 # Chrome versions
 # https://www.ubuntuupdates.org/package/google_chrome/stable/main/base/google-chrome-stable
-ARG CHROME_VERSION="149.0.7827.196-1"
+ARG CHROME_VERSION="149.0.7827.200-1"
 
 ARG SELENIUM_MAJOR_VERSION=4
 
