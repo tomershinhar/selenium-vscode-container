@@ -1,0 +1,21 @@
+name: Validate settings.json
+
+on:
+  pull_request:
+    paths:
+      - 'settings.json'
+  push:
+    paths:
+      - 'settings.json'
+    branches:
+      - main
+
+jobs:
+  validate:
+    name: Validate settings.json syntax
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check settings.json is valid JSON
+        run: python3 -m json.tool settings.json > /dev/null
