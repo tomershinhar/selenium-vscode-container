@@ -142,7 +142,7 @@ RUN mkdir -p ${SELENIUM_HOME}/selenium-server && \
     curl -L https://repo1.maven.org/maven2/org/seleniumhq/selenium/selenium-http-jdk-client/${SELENIUM_VERSION}/selenium-http-jdk-client-${SELENIUM_VERSION}.jar \
         -o ${SELENIUM_HTTP_JDK_CLIENT_PATH}
 
-RUN curl -L https://download-installer.cdn.mozilla.net/pub/firefox/releases/140.9.1esr/linux-x86_64/en-US/firefox-140.9.1esr.tar.xz|tar --xz -x
+RUN curl -L https://download-installer.cdn.mozilla.net/pub/firefox/releases/140.12.0esr/linux-x86_64/en-US/firefox-140.12.0esr.tar.xz|tar --xz -x
 
 RUN curl -LO https://github.com/mozilla/geckodriver/releases/download/${GECKODRIVER_VERSION}/geckodriver-${GECKODRIVER_VERSION}-linux64.tar.gz && \
     tar -C /usr/bin/ -xvf geckodriver-${GECKODRIVER_VERSION}-linux64.tar.gz && \
@@ -159,7 +159,9 @@ RUN CHROME_DRIVER_VERSION=$(google-chrome --version | grep -oP '[\d.]+') && \
     rm -rf chromedriver-linux64.zip chromedriver-linux64
 
 # install code-server
-RUN curl -fsSL https://code-server.dev/install.sh | sh
+RUN curl -fsSL https://code-server.dev/install.sh > install.sh
+RUN sh install.sh --version 4.138.0
+RUN rm install.sh
 
 # download ansible extension file
 RUN export download_url=$(curl -s https://open-vsx.org/api/redhat/ansible | jq -r '.files.download') && \
