@@ -177,13 +177,16 @@ RUN code-server --install-extension ansible-latest.vsix && code-server --install
 # the native python-env-tools/bin/pet binary, breaking env discovery
 # (https://github.com/microsoft/vscode-python/issues/25820). Work around it
 # by copying python-env-tools out of the platform-specific Marketplace build.
-RUN PYTHON_EXT_DIR=$(ls -d ${SELENIUM_HOME}/.local/share/code-server/extensions/ms-python.python-*-universal) && \
-    PYTHON_EXT_VERSION=$(basename ${PYTHON_EXT_DIR} | sed -E 's/ms-python\.python-(.*)-universal/\1/') && \
-    curl -L --compressed "https://marketplace.visualstudio.com/_apis/public/gallery/publishers/ms-python/vsextensions/python/${PYTHON_EXT_VERSION}/vspackage?targetPlatform=linux-x64" \
-        -o ms-python-linux-x64.vsix && \
-    unzip -o ms-python-linux-x64.vsix -d ms-python-linux-x64 && \
-    cp -r ms-python-linux-x64/extension/python-env-tools ${PYTHON_EXT_DIR}/python-env-tools && \
-    rm -rf ms-python-linux-x64.vsix ms-python-linux-x64
+RUN PYTHON_EXT_DIR=$(ls -d ${SELENIUM_HOME}/.local/share/code-server/extensions/ms-python.python-*-universal 2>/dev/null || true) && \
+    if [ -n "${PYTHON_EXT_DIR}" ] && [ ! -x "${PYTHON_EXT_DIR}/python-env-tools/bin/pet" ]; then \
+        PYTHON_EXT_VERSION=$(basename "${PYTHON_EXT_DIR}" | sed -E 's/ms-python\.python-(.*)-universal/\1/') && \
+        curl -fL --compressed "https://marketplace.visualstudio.com/_apis/public/gallery/publishers/ms-python/vsextensions/python/${PYTHON_EXT_VERSION}/vspackage?targetPlatform=linux-x64" \
+            -o ms-python-linux-x64.vsix && \
+        unzip -o ms-python-linux-x64.vsix -d ms-python-linux-x64 && \
+        rm -rf "${PYTHON_EXT_DIR}/python-env-tools" && \
+        cp -r ms-python-linux-x64/extension/python-env-tools "${PYTHON_EXT_DIR}/python-env-tools" && \
+        rm -rf ms-python-linux-x64.vsix ms-python-linux-x64; \
+    fi
 
 # set up work directory for vs-code
 RUN mkdir -p workspace && touch workspace/playbook.yaml
