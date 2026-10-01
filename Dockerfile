@@ -172,6 +172,19 @@ RUN export download_url=$(curl -s https://open-vsx.org/api/redhat/vscode-redhat-
 # install vs-code extensions
 RUN code-server --install-extension ansible-latest.vsix && code-server --install-extension rh-auth-latest.vsix
 
+# the ms-python.python extension gets pulled in as an Ansible extension
+# dependency, but the "universal" build published to Open VSX ships without
+# the native python-env-tools/bin/pet binary, breaking env discovery
+# (https://github.com/microsoft/vscode-python/issues/25820). Work around it
+# by copying python-env-tools out of the platform-specific Marketplace build.
+RUN PYTHON_EXT_DIR=$(ls -d ${SELENIUM_HOME}/.local/share/code-server/extensions/ms-python.python-*-universal) && \
+    PYTHON_EXT_VERSION=$(basename ${PYTHON_EXT_DIR} | sed -E 's/ms-python\.python-(.*)-universal/\1/') && \
+    curl -L --compressed "https://marketplace.visualstudio.com/_apis/public/gallery/publishers/ms-python/vsextensions/python/${PYTHON_EXT_VERSION}/vspackage?targetPlatform=linux-x64" \
+        -o ms-python-linux-x64.vsix && \
+    unzip -o ms-python-linux-x64.vsix -d ms-python-linux-x64 && \
+    cp -r ms-python-linux-x64/extension/python-env-tools ${PYTHON_EXT_DIR}/python-env-tools && \
+    rm -rf ms-python-linux-x64.vsix ms-python-linux-x64
+
 # set up work directory for vs-code
 RUN mkdir -p workspace && touch workspace/playbook.yaml
 
